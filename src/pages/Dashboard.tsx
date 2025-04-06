@@ -101,7 +101,7 @@ const Dashboard = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/auth/${userId}`,
+          `https://serverfd.vercel.app/api/auth/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -200,14 +200,14 @@ const Dashboard = () => {
   const applyFilters = async () => {
     const params = new URLSearchParams(filters as any).toString();
     const res = await fetch(
-      `http://localhost:3001/api/transactions/search?${params}`
+      `https://serverfd.vercel.app/api/transactions/search?${params}`
     );
     const data = await res.json();
     setTransactions(data);
   };
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/transactions/flagged-users")
+    fetch("https://serverfd.vercel.app/api/transactions/flagged-users")
       .then((res) => res.json())
       .then((data) => setFlaggedUsers(data));
   }, []);
@@ -222,7 +222,7 @@ const Dashboard = () => {
   const fetchTransactions = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/transactions`,
+        `https://serverfd.vercel.app/api/transactions`,
         {
           params: { page, limit },
         }
@@ -238,7 +238,7 @@ const Dashboard = () => {
   const fetchLaunderingCategories = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/api/transactions/laundering/categories`
+        `https://serverfd.vercel.app/api/transactions/laundering/categories`
       );
       setLaunderingCategories(response.data);
     } catch (error) {
@@ -273,7 +273,7 @@ const Dashboard = () => {
     const fetchFraudData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3001/api/transactions/laundering"
+          "https://serverfd.vercel.app/api/transactions/laundering"
         ); // Adjust API URL if needed
         const formattedData = response.data.map((t: any) => ({
           date: `${t.Date} ${t.Time}`, // Format date and time

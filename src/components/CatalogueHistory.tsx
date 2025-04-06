@@ -125,7 +125,7 @@ const CatalogueHistory = ({ activeTab }: any) => {
   
     try {
       // Fetch the image from the proxy and convert to Base64
-      const response = await fetch(`http://localhost:3001/api/auth/image?url=${encodeURIComponent(imageUrl)}`);
+      const response = await fetch(`https://serverfd.vercel.app/api/auth/image?url=${encodeURIComponent(imageUrl)}`);
       const blob = await response.blob();
       const base64 = await new Promise<string>((resolve) => {
         const reader = new FileReader();

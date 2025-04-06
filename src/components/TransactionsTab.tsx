@@ -76,7 +76,7 @@ const TransactionsTab = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/auth/${userId}`,
+          `https://serverfd.vercel.app/api/auth/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ const TransactionsTab = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/transactions/user?bankAccount=${user.bankAccount}`
+          `https://serverfd.vercel.app/api/transactions/user?bankAccount=${user.bankAccount}`
         );
         setSentTransactions(response.data.sentTransactions);
         setReceivedTransactions(response.data.receivedTransactions);
@@ -186,7 +186,7 @@ const TransactionsTab = () => {
 
       const token = localStorage.getItem("access_token");
       await axios.post(
-        "http://localhost:3001/api/transactions",
+        "https://serverfd.vercel.app/api/transactions",
         predictedData,
         {
           headers: {
@@ -224,7 +224,7 @@ const TransactionsTab = () => {
       });
 
       const response = await axios.get(
-        `http://localhost:3001/api/transactions/user?bankAccount=${user.bankAccount}`,
+        `https://serverfd.vercel.app/api/transactions/user?bankAccount=${user.bankAccount}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

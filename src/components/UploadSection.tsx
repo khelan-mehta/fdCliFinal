@@ -45,7 +45,7 @@ const UploadSection = () => {
     try {
       // Step 1: Fetch the S3 upload URL for the original image
       const fetchUrlResponse = await fetch(
-        "http://localhost:3001/api/auth/fetch-url/fetch",
+        "https://serverfd.vercel.app/api/auth/fetch-url/fetch",
         { method: "GET" }
       );
       if (!fetchUrlResponse.ok) throw new Error("Failed to fetch upload URL");
@@ -76,7 +76,7 @@ const UploadSection = () => {
   
       // Step 4: Fetch a new S3 upload URL for the processed image
       const fetchProcessedUrlResponse = await fetch(
-        "http://localhost:3001/api/auth/fetch-url/fetch",
+        "https://serverfd.vercel.app/api/auth/fetch-url/fetch",
         { method: "GET" }
       );
       if (!fetchProcessedUrlResponse.ok) throw new Error("Failed to fetch upload URL for processed image");
@@ -100,7 +100,7 @@ const UploadSection = () => {
   
       // Step 7: Send both URLs and description to NestJS server
       const updateDataResponse = await fetch(
-        `http://localhost:3001/api/auth/${userId}/update-data`,
+        `https://serverfd.vercel.app/api/auth/${userId}/update-data`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -25,7 +25,7 @@ export default function KYCVerification() {
 
           if (data.status === "verified") {
             // Call second API to update KYC status in user model
-            await fetch(`http://localhost:3001/api/auth/kyc`, {
+            await fetch(`https://serverfd.vercel.app/api/auth/kyc`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ userId }),
