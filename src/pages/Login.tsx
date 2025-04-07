@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -422,12 +422,12 @@ const Login = () => {
               className="text-center text-sm text-gray-400"
             >
               Don’t have an account?{" "}
-              <a
-                href="/register"
+              <Link
+                to="/register"
                 className="text-indigo-400 hover:text-indigo-300 transition-colors"
               >
                 Register Now
-              </a>
+              </Link>
             </motion.div>
 
             <motion.div
