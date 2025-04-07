@@ -96,6 +96,7 @@ const Dashboard = () => {
 
       if (!userId) {
         setError("User not logged in.");
+        navigate("/login");
         return;
       }
 
