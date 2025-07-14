@@ -23,8 +23,8 @@ const TransactionsTab = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [prediction, setPrediction] = useState({
-    Is_laundering: 0,
-    Laundering_type: "",
+    fraud_probability: 0,
+    lstm_fraud_probability: 0,
   });
 
   // Currencies options
@@ -128,12 +128,15 @@ const TransactionsTab = () => {
 
     const now = new Date();
     const formattedDate = now.toLocaleDateString("en-GB").replace(/\//g, "-"); // DD-MM-YYYY
+    const reversedDate = formattedDate.split("-").reverse().join("-");
+    console.log(reversedDate);
+
     const formattedTime = now.toTimeString().split(" ")[0]; // HH:MM:SS
 
     try {
       const transactionData = {
         Time: formattedTime,
-        Date: formattedDate,
+        Date: reversedDate,
         Sender_account: user.bankAccount,
         Receiver_account: formData.Receiver_account,
         Amount: parseFloat(formData.Amount),
@@ -147,21 +150,28 @@ const TransactionsTab = () => {
         Laundering_type: "",
       };
 
-      let predictedData = { ...transactionData };
+      let predictedData: any = { ...transactionData };
 
       try {
         const predictionResponse = await axios.post(
-          "http://localhost:5000/predict",
+          "http://localhost:8000/predict",
           transactionData
         );
 
         if (predictionResponse.data) {
           predictedData = {
             ...transactionData,
-            Is_laundering: predictionResponse.data.Is_laundering,
-            Laundering_type: predictionResponse.data.Laundering_type,
+            fraud_probability: predictionResponse.data.fraud_probability,
+            lstm_fraud_probability:
+              predictionResponse.data.lstm_fraud_probability,
           };
+          console.log(predictedData);
         }
+        // Set prediction for modal and show it
+        setPrediction({
+          fraud_probability: predictedData.fraud_probability,
+          lstm_fraud_probability: predictedData.lstm_fraud_probability,
+        });
       } catch (predictionErr) {
         console.log(
           "Prediction service error, using default values:",
@@ -195,17 +205,12 @@ const TransactionsTab = () => {
         }
       );
 
-      // Set prediction for modal and show it
-      setPrediction({
-        Is_laundering: predictedData.Is_laundering,
-        Laundering_type: predictedData.Laundering_type,
-      });
       setShowModal(true);
 
       // Hide modal after 3 seconds
       setTimeout(() => {
         setShowModal(false);
-      }, 3000);
+      }, 15000);
 
       //alert("Transaction created successfully!");
 
@@ -249,6 +254,7 @@ const TransactionsTab = () => {
     >
       {showModal && (
         <>
+          {/* Overlay */}
           <div
             style={{
               position: "fixed",
@@ -259,95 +265,79 @@ const TransactionsTab = () => {
             }}
             onClick={() => setShowModal(false)}
           />
+
+          {/* Modal Content */}
           <div
             style={{
               position: "fixed",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              backgroundColor: "white",
-              borderRadius: "12px",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-              padding: "24px",
-              width: "100%",
-              maxWidth: "400px",
-              zIndex: 50,
+              backgroundColor: "#fff",
+              borderRadius: "16px",
+              boxShadow: "0 15px 30px rgba(0, 0, 0, 0.25)",
+              padding: "32px",
+              width: "90%",
+              maxWidth: "420px",
+              zIndex: 100,
               animation: "slideIn 0.3s ease-out",
             }}
           >
+            {/* Header */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "16px",
+                marginBottom: "20px",
               }}
             >
               <h3
-                style={{ fontSize: "20px", fontWeight: 600, color: "#1F2937" }}
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "700",
+                  color: "#111827",
+                  margin: 0,
+                }}
               >
-                AI Prediction Result
+                🔍 AI Prediction Result
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                style={{ color: "#6B7280", cursor: "pointer" }}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "20px",
+                  color: "#6B7280",
+                  cursor: "pointer",
+                  lineHeight: 1,
+                }}
               >
                 ✕
               </button>
             </div>
+
+            {/* Prediction Details */}
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+              style={{ fontSize: "16px", color: "#374151", lineHeight: "1.6" }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "12px",
-                  backgroundColor: "#F9FAFB",
-                  borderRadius: "8px",
-                }}
-              >
-                <span style={{ fontWeight: 500, color: "#4B5563" }}>
-                  Is Laundering:
-                </span>
-                <span
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: "999px",
-                    color:
-                      prediction.Is_laundering === 1 ? "#DC2626" : "#16A34A",
-                    backgroundColor:
-                      prediction.Is_laundering === 1 ? "#FEE2E2" : "#DCFCE7",
-                  }}
-                >
-                  {prediction.Is_laundering === 1 ? "Yes" : "No"}
+              <div style={{ marginBottom: "10px" }}>
+                <strong>Fraud Probability:</strong>{" "}
+                <span style={{ color: "#DC2626", fontWeight: 600 }}>
+                  {prediction?.fraud_probability?.toFixed(3) ?? "N/A"}
                 </span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "12px",
-                  backgroundColor: "#F9FAFB",
-                  borderRadius: "8px",
-                }}
-              >
-                <span style={{ fontWeight: 500, color: "#4B5563" }}>
-                  Laundering Type:
-                </span>
-                <span style={{ fontWeight: 600, color: "#1F2937" }}>
-                  {prediction.Laundering_type}
+              <div>
+                <strong>LSTM Fraud Probability:</strong>{" "}
+                <span style={{ color: "#D97706", fontWeight: 600 }}>
+                  {prediction?.lstm_fraud_probability?.toFixed(3) ?? "N/A"}
                 </span>
               </div>
-            </div>
-            <div style={{ marginTop: "24px", textAlign: "center" }}>
-              <p style={{ fontSize: "14px", color: "#6B7280" }}>
-                This prediction will auto-close in 3 seconds
-              </p>
             </div>
           </div>
         </>
       )}
+
       <h2 className="text-2xl font-semibold mb-4">Transactions</h2>
 
       {error && <p className="text-red-500">{error}</p>}
